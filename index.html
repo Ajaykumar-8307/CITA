@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe Preview - UX Pilot</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background: #fff;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        .preview-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f8f9fa;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 2px solid #d1d5db;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .logo {
+            font-weight: 700;
+            font-size: 20px;
+            color: #6b46c1;
+        }
+        .actions {
+            display: flex;
+            gap: 12px;
+        }
+        button {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: #6b46c1;
+            color: white;
+        }
+        .fullscreen-notice {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-size: 13px;
+            z-index: 200;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Simple header for the preview page -->
+    <!--<div class="header">
+        <div class="logo">UX Pilot</div>
+        <div class="actions">
+            <button onclick="window.history.back()" style="background:#f3f4f6;color:#374151;">← Back</button>
+            <button onclick="toggleFullscreen()" class="btn-primary">Enter Fullscreen</button>
+        </div>
+    </div> -->
+
+    <div class="preview-container" style="margin-top:0px;">
+        <!-- Replace the src below with the path to your saved_resource(1).html file if it's in the same folder -->
+        <iframe 
+            src="UX Pilot - Superfast UX_UI Design with AI_files/saved_resource.html" 
+            title="Wireframe Preview" 
+            frameborder="0"
+            allowfullscreen>
+        </iframe>
+    </div>
+
+    <div class="fullscreen-notice" id="notice">
+        Press ESC to exit fullscreen
+    </div>
+
+    <script>
+        function toggleFullscreen() {
+            const elem = document.documentElement;
+            if (!document.fullscreenElement) {
+                elem.requestFullscreen().catch(err => {
+                    alert(`Error attempting to enable full-screen mode: ${err.message}`);
+                });
+                document.getElementById('notice').style.display = 'block';
+            } else {
+                document.exitFullscreen();
+                document.getElementById('notice').style.display = 'none';
+            }
+        }
+
+        // Auto-enter fullscreen on load (optional - user can click the button)
+        // document.documentElement.requestFullscreen();
+
+        // Keyboard shortcut
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "Escape") {
+                document.getElementById('notice').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
