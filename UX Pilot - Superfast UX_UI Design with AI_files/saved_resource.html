@@ -725,9 +725,9 @@
                             <p class="text-gray-400">Registration Fees: <span class="text-white font-bold">₹150</span></p>
                         </div>
                         
-                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSe5OVMx72AEi7qgpSu_v6HdCZWgNxJ9JwSg5TglR7lU-e4vBw/viewform" target="_blank"><a href="https://docs.google.com/forms/d/e/1FAIpQLSe5OVMx72AEi7qgpSu_v6HdCZWgNxJ9JwSg5TglR7lU-e4vBw/viewform" class="w-full md:w-auto px-8 py-3 bg-accent text-black font-bold font-orbitron rounded-lg hover:bg-yellow-400 transition-colors shadow-neon text-center">
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSe5OVMx72AEi7qgpSu_v6HdCZWgNxJ9JwSg5TglR7lU-e4vBw/viewform" target="_blank" class="w-full md:w-auto px-8 py-3 bg-accent text-black font-bold font-orbitron rounded-lg hover:bg-yellow-400 transition-colors shadow-neon text-center">
                             Register Online <i class="ml-2" data-fa-i2svg=""><svg class="svg-inline--fa fa-arrow-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="arrow-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"></path></svg></i>
-                        </a></a>
+                        </a>
                         
                         <p class="text-xs text-gray-500">* Limited seats available. Early bird closes Feb 28.</p>
                     </div>
@@ -988,38 +988,5 @@
             animation: scaleIn 0.8s ease-out;
         }
     </style>
-
-  <script>
-    (function() {
-      function blockEvent(e) {
-        if (!e) return false;
-        if (typeof e.preventDefault === 'function') e.preventDefault();
-        if (typeof e.stopPropagation === 'function') e.stopPropagation();
-        if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
-        return false;
-      }
-
-      // Block all anchor navigations (including http(s), mailto, tel, hash, fragments)
-      document.addEventListener('click', function(e) {
-        var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
-        if (!a) return;
-        return blockEvent(e);
-      }, true);
-
-      // Neutralize programmatic navigation attempts
-      try { window.open = function() { return null }; } catch (_) {}
-      try {
-        var noop = function(){};
-        history.pushState = noop;
-        history.replaceState = noop;
-      } catch (_) {}
-      try {
-        if (window.location) {
-          window.location.assign = function(){};
-          window.location.replace = function(){};
-        }
-      } catch (_) {}
-    })();
-  </script>
 
 </body></html>
