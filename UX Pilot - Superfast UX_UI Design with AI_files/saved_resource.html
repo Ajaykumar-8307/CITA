@@ -3118,6 +3118,248 @@
         </div>
     </section>
 
+    <section id="image-gallery" class="image-gallery"
+        style="padding: 16px; background-color: #0d1117; font-family: system-ui, -apple-system, sans-serif;">
+        <style>
+            .responsive-gallery-wrapper {
+                display: flex;
+                flex-direction: row;
+                gap: 16px;
+                width: 100%;
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+
+            .main-image-container {
+                width: 70%;
+                flex-shrink: 0;
+                position: relative;
+                border-radius: 12px;
+                overflow: hidden;
+                background-color: #161b22;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            }
+
+            .side-thumbnails-container {
+                width: 30%;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                align-content: start;
+            }
+
+            .thumb-item {
+                position: relative;
+                border-radius: 8px;
+                overflow: hidden;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                opacity: 0.6;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .thumb-item.active {
+                opacity: 1;
+                border: 2px solid #3b82f6;
+            }
+
+            .pagination-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background-color: rgba(255, 255, 255, 0.3);
+                cursor: pointer;
+                transition: background-color 0.2s ease, transform 0.2s ease;
+            }
+
+            .pagination-dot.active {
+                background-color: #ffffff;
+                transform: scale(1.2);
+            }
+
+            @media (max-width: 768px) {
+                .responsive-gallery-wrapper {
+                    flex-direction: column;
+                }
+
+                .main-image-container,
+                .side-thumbnails-container {
+                    width: 100%;
+                }
+
+                .side-thumbnails-container {
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 8px;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .nav-arrow-btn {
+                    width: 36px !important;
+                    height: 36px !important;
+                }
+
+                .gallery-pagination-badge {
+                    font-size: 11px !important;
+                    padding: 4px 10px !important;
+                }
+            }
+        </style>
+
+        <div class="responsive-gallery-wrapper">
+            <!-- Main Showcase -->
+            <div class="main-image-container">
+                <img id="gallery-main-img"
+                    style="width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; transition: opacity 0.2s ease;"
+                    src="" alt="">
+
+                <!-- Navigation Controls -->
+                <button id="gallery-prev-btn" class="nav-arrow-btn" aria-label="Previous"
+                    style="position: absolute; top: 50%; left: 12px; transform: translateY(-50%); background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(6px); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m15 18-6-6 6-6" />
+                    </svg>
+                </button>
+                <button id="gallery-next-btn" class="nav-arrow-btn" aria-label="Next"
+                    style="position: absolute; top: 50%; right: 12px; transform: translateY(-50%); background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(6px); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m9 18 6-6-6-6" />
+                    </svg>
+                </button>
+
+                <!-- Status Overlay -->
+                <div
+                    style="position: absolute; bottom: 12px; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 16px; pointer-events: none;">
+                    <div id="gallery-counter" class="gallery-pagination-badge"
+                        style="background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(6px); color: #ffffff; font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.15);">
+                    </div>
+                    <div id="gallery-dots-container"
+                        style="display: flex; gap: 8px; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(6px); padding: 8px 12px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.15); pointer-events: auto;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Thumbnails Container -->
+            <div id="gallery-thumbs-container" class="side-thumbnails-container"></div>
+        </div>
+    </section>
+
+    <script>
+            (function () {
+                // Image Data Array
+                const images = [
+                    {src: "https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg?cs=srgb&dl=pexels-souvenirpixels-414612.jpg&fm=jpg", alt: "Dock Night View"},
+                    {src: "https://th.bing.com/th/id/OIP.QDWTuyM_m7DS2Hd2ghBofwHaNK?r=0&o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3", alt: "Mountain Lake Reflection"},
+                    {src: "https://images.pexels.com/photos/147411/italy-mountains-dawn-daybreak-147411.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", alt: "Sunset Valley View"},
+                    {src: "https://images.pexels.com/photos/247599/pexels-photo-247599.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", alt: "Forest Sun Rays"},
+                    {src: "https://images.pexels.com/photos/132037/pexels-photo-132037.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", alt: "Tropical Beach"},
+                    {src: "https://images.pexels.com/photos/268533/pexels-photo-268533.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", alt: "Solitary Tree at Twilight"},
+                    {src: "https://images.pexels.com/photos/34950/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", alt: "Autumn Forest Path"},
+                    {src: "https://images.pexels.com/photos/158063/buchenhain-sheet-sunlight-sunbeam-158063.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", alt: "Green Leaves Bokeh"}
+                ];
+
+                let currentIndex = 0;
+                const maxDisplayedThumbs = 6;
+
+                const mainImg = document.getElementById("gallery-main-img");
+                const prevBtn = document.getElementById("gallery-prev-btn");
+                const nextBtn = document.getElementById("gallery-next-btn");
+                const counter = document.getElementById("gallery-counter");
+                const dotsContainer = document.getElementById("gallery-dots-container");
+                const thumbsContainer = document.getElementById("gallery-thumbs-container");
+
+                function renderGallery() {
+                    // Render Dots
+                    dotsContainer.innerHTML = "";
+                    images.forEach((_, index) => {
+                        const dot = document.createElement("span");
+                        dot.className = `pagination-dot ${index === currentIndex ? "active" : ""}`;
+                        dot.addEventListener("click", () => goToImage(index));
+                        dotsContainer.appendChild(dot);
+                    });
+
+                    // Render Thumbnails
+                    thumbsContainer.innerHTML = "";
+                    const visibleThumbs = images.slice(0, maxDisplayedThumbs);
+                    const extraCount = images.length - maxDisplayedThumbs;
+
+                    visibleThumbs.forEach((imgData, index) => {
+                        const thumbBox = document.createElement("div");
+                        const isLastWithMore = index === maxDisplayedThumbs - 1 && extraCount > 0;
+
+                        thumbBox.className = `thumb-item ${index === currentIndex ? "active" : ""}`;
+
+                        let htmlContent = `<img style="width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; ${isLastWithMore ? 'filter: brightness(0.3);' : ''}" src="${imgData.src}" alt="${imgData.alt}">`;
+
+                        if (isLastWithMore) {
+                            htmlContent += `<span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 600; font-size: 13px;">+${extraCount + 1} More</span>`;
+                        }
+
+                        thumbBox.innerHTML = htmlContent;
+                        thumbBox.addEventListener("click", () => goToImage(index));
+                        thumbsContainer.appendChild(thumbBox);
+                    });
+
+                    updateSlide();
+                }
+
+                function updateSlide() {
+                    // Smooth Image Fade Transition
+                    mainImg.style.opacity = "0.5";
+                    setTimeout(() => {
+                        mainImg.src = images[currentIndex].src;
+                        mainImg.alt = images[currentIndex].alt;
+                        mainImg.style.opacity = "1";
+                    }, 100);
+
+                    // Update Counter Text
+                    counter.textContent = `${currentIndex + 1} / ${images.length}`;
+
+                    // Update Active Dot
+                    const dots = dotsContainer.querySelectorAll(".pagination-dot");
+                    dots.forEach((dot, index) => {
+                        dot.classList.toggle("active", index === currentIndex);
+                    });
+
+                    // Update Active Thumbnail Highlight
+                    const thumbs = thumbsContainer.querySelectorAll(".thumb-item");
+                    thumbs.forEach((thumb, index) => {
+                        thumb.classList.toggle("active", index === currentIndex);
+                    });
+                }
+
+                function goToImage(index) {
+                    currentIndex = index;
+                    updateSlide();
+                }
+
+                function nextImage() {
+                    currentIndex = (currentIndex + 1) % images.length;
+                    updateSlide();
+                }
+
+                function prevImage() {
+                    currentIndex = (currentIndex - 1 + images.length) % images.length;
+                    updateSlide();
+                }
+
+                // Event Listeners
+                nextBtn.addEventListener("click", nextImage);
+                prevBtn.addEventListener("click", prevImage);
+
+                // Keyboard Arrow Key Support
+                document.addEventListener("keydown", (e) => {
+                    if (e.key === "ArrowRight") nextImage();
+                    if (e.key === "ArrowLeft") prevImage();
+                });
+
+                // Initialize Gallery
+                renderGallery();
+            })();
+    </script>
+
     <!-- About Section -->
     <section id="about" class="py-24 bg-bg-secondary/30 relative border-t border-white/5">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -3946,7 +4188,8 @@
                                         d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z">
                                     </path>
                                 </svg></i>
-                            <a href="cita2k26.pmu@gmail.com" onclick="sendHtmlEmail()" target="_blank">cita2k26.pmu@gmail.com</a>
+                            <a href="cita2k26.pmu@gmail.com" onclick="sendHtmlEmail()"
+                                target="_blank">cita2k26.pmu@gmail.com</a>
                         </li>
                         <li class="flex items-start text-gray-400 text-sm">
                             <i class="text-accent mr-3 mt-1" data-fa-i2svg=""><svg
