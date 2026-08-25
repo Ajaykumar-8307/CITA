@@ -3318,8 +3318,11 @@
                 ];
 
                 let currentIndex = 0;
+                let autoScrollTimer = null;
+                const autoScrollInterval = 2500; // Time in ms (3.5 seconds)
                 const maxDisplayedThumbs = 6;
 
+                const mainContainer = document.querySelector(".main-image-container");
                 const mainImg = document.getElementById("gallery-main-img");
                 const prevBtn = document.getElementById("gallery-prev-btn");
                 const nextBtn = document.getElementById("gallery-next-btn");
@@ -3333,7 +3336,10 @@
                     images.forEach((_, index) => {
                         const dot = document.createElement("span");
                         dot.className = `pagination-dot ${index === currentIndex ? "active" : ""}`;
-                        dot.addEventListener("click", () => goToImage(index));
+                        dot.addEventListener("click", () => {
+                            goToImage(index);
+                            resetAutoScroll();
+                        });
                         dotsContainer.appendChild(dot);
                     });
 
@@ -3355,7 +3361,10 @@
                         }
 
                         thumbBox.innerHTML = htmlContent;
-                        thumbBox.addEventListener("click", () => goToImage(index));
+                        thumbBox.addEventListener("click", () => {
+                            goToImage(index);
+                            resetAutoScroll();
+                        });
                         thumbsContainer.appendChild(thumbBox);
                     });
 
@@ -3402,18 +3411,51 @@
                     updateSlide();
                 }
 
+                // Auto-Scroll Logic
+                function startAutoScroll() {
+                    stopAutoScroll();
+                    autoScrollTimer = setInterval(nextImage, autoScrollInterval);
+                }
+
+                function stopAutoScroll() {
+                    if (autoScrollTimer) clearInterval(autoScrollTimer);
+                }
+
+                function resetAutoScroll() {
+                    stopAutoScroll();
+                    startAutoScroll();
+                }
+
                 // Event Listeners
-                nextBtn.addEventListener("click", nextImage);
-                prevBtn.addEventListener("click", prevImage);
+                nextBtn.addEventListener("click", () => {
+                    nextImage();
+                    resetAutoScroll();
+                });
+
+                prevBtn.addEventListener("click", () => {
+                    prevImage();
+                    resetAutoScroll();
+                });
+
+                // Pause Auto-Scroll on Hover
+                mainContainer.addEventListener("mouseenter", stopAutoScroll);
+                mainContainer.addEventListener("mouseleave", startAutoScroll);
 
                 // Keyboard Arrow Key Support
                 document.addEventListener("keydown", (e) => {
-                    if (e.key === "ArrowRight") nextImage();
-                    if (e.key === "ArrowLeft") prevImage();
+                    if (e.key === "ArrowRight") {
+                        nextImage();
+                        resetAutoScroll();
+                    }
+                    if (e.key === "ArrowLeft") {
+                        prevImage();
+                        resetAutoScroll();
+                    }
                 });
 
-                // Initialize Gallery
+                // Initialize Gallery & Start Timer
                 renderGallery();
+                startAutoScroll();
             })();
     </script>
 
