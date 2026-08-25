@@ -3033,7 +3033,7 @@
                             <path fill="currentColor"
                                 d="M128 0c13.3 0 24 10.7 24 24V64H296V24c0-13.3 10.7-24 24-24s24 10.7 24 24V64h40c35.3 0 64 28.7 64 64v16 48V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192 144 128C0 92.7 28.7 64 64 64h40V24c0-13.3 10.7-24 24-24zM400 192H48V448c0 8.8 7.2 16 16 16H384c8.8 0 16-7.2 16-16V192zM329 297L217 409c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47 95-95c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z">
                             </path>
-                        </svg></i> March 25, 2026</span>
+                        </svg></i> Spetember 17, 2026</span>
                 <span class="hidden md:inline text-gray-600">|</span>
                 <span class="flex items-center"><i class="text-accent mr-2" data-fa-i2svg=""><svg
                             class="svg-inline--fa fa-clock" aria-hidden="true" focusable="false" data-prefix="far"
@@ -3265,7 +3265,7 @@
             <!-- Main Showcase -->
             <div class="main-image-container">
                 <img id="gallery-main-img"
-                    style="width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; transition: opacity 0.2s ease;"
+                    style="width: 100%; aspect-ratio: 16/9; object-fit: contain; display: block; transition: opacity 0.2s ease;"
                     src="" alt="">
 
                 <!-- Navigation Controls -->
@@ -3305,14 +3305,16 @@
             (function () {
                 // Image Data Array
                 const images = [
-                    {src: "https://i.ytimg.com/vi/1aTLyaJJUR0/hq720.jpg?sqp=-oaymwE7CK4FEIIDSFryq4qpAy0IARUAAAAAGAElAADIQj0AgKJD8AEB-AHUBoAC4AOKAgwIABABGGUgQShEMA8=&rs=AOn4CLAZW3JdzpuNcesRLz2eh30PjzQWJw", alt: "Dock Night View"},
-                    {src: "https://th.bing.com/th/id/OIP.QDWTuyM_m7DS2Hd2ghBofwHaNK?r=0&o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3", alt: "Mountain Lake Reflection"},
-                    {src: "https://images.pexels.com/photos/147411/italy-mountains-dawn-daybreak-147411.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", alt: "Sunset Valley View"},
-                    {src: "https://images.pexels.com/photos/247599/pexels-photo-247599.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", alt: "Forest Sun Rays"},
-                    {src: "https://images.pexels.com/photos/132037/pexels-photo-132037.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", alt: "Tropical Beach"},
-                    {src: "https://images.pexels.com/photos/268533/pexels-photo-268533.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", alt: "Solitary Tree at Twilight"},
-                    {src: "https://images.pexels.com/photos/34950/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", alt: "Autumn Forest Path"},
-                    {src: "https://images.pexels.com/photos/158063/buchenhain-sheet-sunlight-sunbeam-158063.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", alt: "Green Leaves Bokeh"}
+                    {src: "./assets/brochure.jpeg", alt: "Dock Night View"},
+                    {src: "./assets/cita-group-photo.jpeg", alt: "Cita group photo"},
+                    {src: "./assets/cita-group-photo1.jpeg", alt: "Cita group photo"},
+                    {src: "./assets/cita-prize.jpeg", alt: "Cita Prize distribution"},
+                    {src: "./assets/event1.jpeg", alt: "Event1"},
+                    {src: "./assets/event2.jpeg", alt: "Event2"},
+                    {src: "./assets/event3.jpeg", alt: "Event 3"},
+                    {src: "./assets/event4.jpeg", alt: "Event 4"},
+                    {src: "./assets/event5.jpeg", alt: "Event 5"},
+                    {src: "./assets/event6.jpeg", alt: "Event 6"}
                 ];
 
                 let currentIndex = 0;
@@ -4238,7 +4240,7 @@
 
         // Countdown Timer Logic
         function updateCountdown() {
-            const eventDate = new Date("September 18, 2026 08:30:00").getTime();
+            const eventDate = new Date("September 17, 2026 08:30:00").getTime();
             const now = new Date().getTime();
             const distance = eventDate - now;
 
