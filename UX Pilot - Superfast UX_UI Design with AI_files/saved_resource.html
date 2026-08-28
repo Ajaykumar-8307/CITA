@@ -3195,6 +3195,10 @@
                 box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
             }
 
+            #gallery-main-img {
+                cursor: zoom-in;
+            }
+
             .side-thumbnails-container {
                 width: 30%;
                 display: grid;
@@ -3230,6 +3234,87 @@
             .pagination-dot.active {
                 background-color: #ffffff;
                 transform: scale(1.2);
+            }
+
+            /* Lightbox */
+            .gallery-lightbox-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.92);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.2s ease;
+            }
+
+            .gallery-lightbox-overlay.open {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .gallery-lightbox-overlay img {
+                max-width: 90vw;
+                max-height: 85vh;
+                object-fit: contain;
+                border-radius: 8px;
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+            }
+
+            .lightbox-close-btn {
+                position: absolute;
+                top: 20px;
+                right: 24px;
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.25);
+                color: #ffffff;
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+            }
+
+            .lightbox-nav-btn {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.25);
+                color: #ffffff;
+                width: 46px;
+                height: 46px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+            }
+
+            .lightbox-prev {
+                left: 20px;
+            }
+
+            .lightbox-next {
+                right: 20px;
+            }
+
+            .lightbox-counter {
+                position: absolute;
+                bottom: 24px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                color: #ffffff;
+                font-size: 13px;
+                font-weight: 600;
+                padding: 6px 14px;
+                border-radius: 20px;
             }
 
             @media (max-width: 768px) {
@@ -3299,13 +3384,37 @@
             <!-- Dynamic Thumbnails Container -->
             <div id="gallery-thumbs-container" class="side-thumbnails-container"></div>
         </div>
+
+        <!-- Lightbox -->
+        <div id="gallery-lightbox" class="gallery-lightbox-overlay">
+            <button class="lightbox-close-btn" id="lightbox-close-btn" aria-label="Close">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+            </button>
+            <button class="lightbox-nav-btn lightbox-prev" id="lightbox-prev-btn" aria-label="Previous">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m15 18-6-6 6-6" />
+                </svg>
+            </button>
+            <img id="lightbox-img" src="" alt="">
+            <button class="lightbox-nav-btn lightbox-next" id="lightbox-next-btn" aria-label="Next">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6" />
+                </svg>
+            </button>
+            <div class="lightbox-counter" id="lightbox-counter"></div>
+        </div>
     </section>
 
     <script>
             (function () {
                 // Image Data Array
                 const images = [
-                    { src: "./assets/brochure.jpeg", alt: "Dock Night View" },
+                    { src: "./assets/brochure.webp", alt: "Dock Night View" },
                     { src: "./assets/cita-group-photo.jpeg", alt: "Cita group photo" },
                     { src: "./assets/cita-group-photo1.jpeg", alt: "Cita group photo" },
                     { src: "./assets/cita-prize.jpeg", alt: "Cita Prize distribution" },
@@ -3318,11 +3427,8 @@
                 ];
 
                 let currentIndex = 0;
-                let autoScrollTimer = null;
-                const autoScrollInterval = 5000; // Time in ms (3.5 seconds)
                 const maxDisplayedThumbs = 6;
 
-                const mainContainer = document.querySelector(".main-image-container");
                 const mainImg = document.getElementById("gallery-main-img");
                 const prevBtn = document.getElementById("gallery-prev-btn");
                 const nextBtn = document.getElementById("gallery-next-btn");
@@ -3330,16 +3436,22 @@
                 const dotsContainer = document.getElementById("gallery-dots-container");
                 const thumbsContainer = document.getElementById("gallery-thumbs-container");
 
+                // Lightbox elements
+                const lightbox = document.getElementById("gallery-lightbox");
+                const lightboxImg = document.getElementById("lightbox-img");
+                const lightboxCounter = document.getElementById("lightbox-counter");
+                const lightboxCloseBtn = document.getElementById("lightbox-close-btn");
+                const lightboxPrevBtn = document.getElementById("lightbox-prev-btn");
+                const lightboxNextBtn = document.getElementById("lightbox-next-btn");
+                let lightboxOpen = false;
+
                 function renderGallery() {
                     // Render Dots
                     dotsContainer.innerHTML = "";
                     images.forEach((_, index) => {
                         const dot = document.createElement("span");
                         dot.className = `pagination-dot ${index === currentIndex ? "active" : ""}`;
-                        dot.addEventListener("click", () => {
-                            goToImage(index);
-                            resetAutoScroll();
-                        });
+                        dot.addEventListener("click", () => goToImage(index));
                         dotsContainer.appendChild(dot);
                     });
 
@@ -3361,10 +3473,7 @@
                         }
 
                         thumbBox.innerHTML = htmlContent;
-                        thumbBox.addEventListener("click", () => {
-                            goToImage(index);
-                            resetAutoScroll();
-                        });
+                        thumbBox.addEventListener("click", () => goToImage(index));
                         thumbsContainer.appendChild(thumbBox);
                     });
 
@@ -3394,6 +3503,11 @@
                     thumbs.forEach((thumb, index) => {
                         thumb.classList.toggle("active", index === currentIndex);
                     });
+
+                    // Keep lightbox in sync if it's open
+                    if (lightboxOpen) {
+                        updateLightboxSlide();
+                    }
                 }
 
                 function goToImage(index) {
@@ -3411,51 +3525,53 @@
                     updateSlide();
                 }
 
-                // Auto-Scroll Logic
-                function startAutoScroll() {
-                    stopAutoScroll();
-                    autoScrollTimer = setInterval(nextImage, autoScrollInterval);
+                // ---- Lightbox logic ----
+                function updateLightboxSlide() {
+                    lightboxImg.src = images[currentIndex].src;
+                    lightboxImg.alt = images[currentIndex].alt;
+                    lightboxCounter.textContent = `${currentIndex + 1} / ${images.length}`;
                 }
 
-                function stopAutoScroll() {
-                    if (autoScrollTimer) clearInterval(autoScrollTimer);
+                function openLightbox() {
+                    lightboxOpen = true;
+                    updateLightboxSlide();
+                    lightbox.classList.add("open");
+                    document.body.style.overflow = "hidden";
                 }
 
-                function resetAutoScroll() {
-                    stopAutoScroll();
-                    startAutoScroll();
+                function closeLightbox() {
+                    lightboxOpen = false;
+                    lightbox.classList.remove("open");
+                    document.body.style.overflow = "";
                 }
 
-                // Event Listeners
-                nextBtn.addEventListener("click", () => {
-                    nextImage();
-                    resetAutoScroll();
+                mainImg.addEventListener("click", openLightbox);
+                lightboxCloseBtn.addEventListener("click", closeLightbox);
+                lightbox.addEventListener("click", (e) => {
+                    if (e.target === lightbox) closeLightbox();
                 });
-
-                prevBtn.addEventListener("click", () => {
+                lightboxPrevBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
                     prevImage();
-                    resetAutoScroll();
+                });
+                lightboxNextBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    nextImage();
                 });
 
-                // Pause Auto-Scroll on Hover
-                mainContainer.addEventListener("mouseenter", stopAutoScroll);
-                mainContainer.addEventListener("mouseleave", startAutoScroll);
+                // Event Listeners (main gallery arrows)
+                nextBtn.addEventListener("click", nextImage);
+                prevBtn.addEventListener("click", prevImage);
 
-                // Keyboard Arrow Key Support
+                // Keyboard Support
                 document.addEventListener("keydown", (e) => {
-                    if (e.key === "ArrowRight") {
-                        nextImage();
-                        resetAutoScroll();
-                    }
-                    if (e.key === "ArrowLeft") {
-                        prevImage();
-                        resetAutoScroll();
-                    }
+                    if (e.key === "ArrowRight") nextImage();
+                    if (e.key === "ArrowLeft") prevImage();
+                    if (e.key === "Escape" && lightboxOpen) closeLightbox();
                 });
 
-                // Initialize Gallery & Start Timer
+                // Initialize Gallery (no auto-scroll)
                 renderGallery();
-                startAutoScroll();
             })();
     </script>
 
@@ -4320,9 +4436,8 @@
                                         d="M408 120c0 54.6-73.1 151.9-105.2 192c-7.7 9.6-22 9.6-29.6 0C241.1 271.9 168 174.6 168 120C168 53.7 221.7 0 288 0s120 53.7 120 120zm8 80.4c3.5-6.9 6.7-13.8 9.6-20.6c.5-1.2 1-2.5 1.5-3.7l116-46.4C558.9 123.4 576 135 576 152V422.8c0 9.8-6 18.6-15.1 22.3L416 503V200.4zM137.6 138.3c2.4 14.1 7.2 28.3 12.8 41.5c2.9 6.8 6.1 13.7 9.6 20.6V451.8L32.9 502.7C17.1 509 0 497.4 0 480.4V209.6c0-9.8 6-18.6 15.1-22.3l122.6-49zM327.8 332c13.9-17.4 35.7-45.7 56.2-77V504.3L192 449.4V255c20.5 31.3 42.3 59.6 56.2 77c20.5 25.6 59.1 25.6 79.6 0zM288 152a40 40 0 1 0 0-80 40 40 0 1 0 0 80z">
                                     </path>
                                 </svg></i>
-                            <a href="https://maps.app.goo.gl/NffHkusRgoAayq6x6"
-                                target="_blank" rel="noopener noreferrer"
-                                class="hover:text-accent transition-colors cursor-pointer">
+                            <a href="https://maps.app.goo.gl/NffHkusRgoAayq6x6" target="_blank"
+                                rel="noopener noreferrer" class="hover:text-accent transition-colors cursor-pointer">
                                 <span>
                                     Dept of Computer Science,<br>
                                     Periyar Maniammai Institute,<br>
